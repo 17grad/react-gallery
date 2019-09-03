@@ -5,7 +5,6 @@ import * as styles from './gallery.scss';
 import { Image } from 'core/models/image';
 
 interface GalleryProps {
-  thumbnails: Image[];
   images: Image[];
 }
 
@@ -52,12 +51,12 @@ export const Gallery = (props: GalleryProps) => {
 
   return (<>
     <ul className={ styles.gallery }>
-      { props.thumbnails.map((thumb: Image) =>
+      { props.images.map((thumb: Image) =>
         <li className={ styles.galleryItem }
             key={ thumb.id }
             onClick={ () => handleImageClick(thumb.id) }>
           <img className={ styles.galleryImage }
-              src={ thumb.src }
+              src={ thumb.thumbnail }
               alt={ thumb.alt }/>
         </li>
       )}
@@ -85,10 +84,10 @@ export const Gallery = (props: GalleryProps) => {
       {/* thumbnail swiper */}
       <div className={ styles.lightboxThumbs }>
         <Swiper {...thumbnailSwiperParams} slidesPerView='auto'>
-          { props.thumbnails.map((thumb: Image) =>
+          { props.images.map((thumb: Image) =>
             <div className={ styles.lightboxSlide } key={ thumb.id }>
               <img className={ styles.lightboxImage }
-                  src={ thumb.src }
+                  src={ thumb.thumbnail }
                   alt={ thumb.alt }  />
             </div>
           )}
