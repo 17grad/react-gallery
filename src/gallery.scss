@@ -1,0 +1,251 @@
+@import 'utility';
+
+img[src=''] {
+  background: gainsboro;
+  display: block;
+}
+
+.gallery {
+  display: grid;
+  grid-gap: $spacing-small;
+  grid-template: auto / repeat(auto-fit, minmax(150px, #{(100 / 3 * 1fr)}));
+  margin: 0;
+  padding: 0;
+
+  @include break(desktop) {
+    grid-gap: $spacing-base;
+  }
+
+  &__item {
+    cursor: pointer;
+    list-style: none;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+
+    &::after {
+      content: '';
+      display: table;
+      padding-bottom: 100%;
+      width: 100%;
+    }
+  }
+
+  &__item:hover &__image {
+    transform: scale(1.1);
+  }
+
+  &__image {
+    @include absolute-image;
+    transition: 1.5s ease;
+  }
+}
+
+.lightbox {
+  background: rgba($color-black, 0.95);
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  left: 0;
+  opacity: 0;
+  padding: $spacing-large;
+  position: fixed;
+  right: 0;
+  top: 0;
+  visibility: hidden;
+  z-index: 100000;
+
+  &.-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &__close {
+    -webkit-appearance: none;
+    align-items: center;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    display: flex;
+    filter: drop-shadow(0 3px 15px rgba($color-text, 0.2))
+      drop-shadow(0 0 30px rgba($color-text, 1));
+    height: 4rem;
+    justify-content: center;
+    margin: 20px;
+    outline: 0;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 4rem;
+    z-index: 4000;
+
+    &::before, &::after {
+      border-bottom: 3px solid $color-base;
+      content: '';
+      position: absolute;
+      transition: 0.4s ease;
+      width: 2.5rem;
+    }
+
+    &:hover {
+      &::before { transform: rotate(-45deg) scale(1.2) }
+      &::after { transform: rotate(45deg) scale(1.2) }
+    }
+
+    &::before { transform: rotate(-45deg); }
+    &::after { transform: rotate(45deg); }
+  }
+
+  &__wrap {
+    overflow: hidden;
+    position: relative;
+  }
+
+  &__top {
+    composes: lightbox__wrap;
+    flex: 1;
+
+    :global .swiper-container {
+      height: 100%;
+    }
+
+    :global .swiper-wrapper {
+      height: 100%;
+    }
+  }
+
+  &__slide {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  &__thumbs {
+    composes: lightbox__wrap;
+    margin-top: $spacing-large;
+  }
+
+  &__thumbs &__slide {
+    cursor: pointer;
+    width: percentage(1/2);
+
+    @include break(380px) {
+      width: percentage(1/4);
+    }
+
+    @include break(tablet-landscape) {
+      width: percentage(1/7);
+    }
+
+    @include break(desktop) {
+      width: percentage(1/10);
+    }
+
+    &::after {
+      content: '';
+      display: table;
+      padding-bottom: 100%;
+      width: 100%;
+    }
+  }
+
+  &__image {
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    opacity: 0;
+    position: absolute;
+    right: 50%;
+    top: 50%;
+    transform: translate(50%, -50%);
+    transition: opacity 0.3s;
+    width: auto;
+
+    &.-loaded {
+      opacity: 1;
+    }
+  }
+
+  &__thumbs &__image {
+    object-fit: cover;
+    min-width: 100%;
+  }
+}
+
+:global .lightbox__button-next,
+:global .lightbox__button-prev {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  bottom: 0;
+  cursor: pointer;
+  display: flex;
+  filter: drop-shadow(0 3px 15px rgba($color-text, 0.2))
+    drop-shadow(0 0 30px rgba($color-text, 1));
+  height: 100%;
+  justify-content: center;
+  margin: 0;
+  outline: 0;
+  position: absolute;
+  top: 0;
+  transition: 0.2s ease;
+  width: 20%;
+  z-index: 10;
+
+  &::before, &::after {
+    border-bottom: calc(4px + 0.075vw) solid $color-base;
+    content: '';
+    left: 20%;
+    position: absolute;
+    width: calc(2rem + 1vw);
+  }
+
+  &::before {
+    transform: rotate(-45deg);
+    transform-origin: 0 0;
+  }
+
+  &::after {
+    transform: rotate(45deg) translateY(-100%);
+    transform-origin: 0 0;
+  }
+
+  &:active {
+    background-color: rgba($color-base, 0.1);
+  }
+
+  &.swiper-button-disabled {
+    cursor: default;
+    opacity: 0.25;
+    pointer-events: none;
+  }
+}
+
+:global .lightbox__button-prev {
+  left: 0;
+}
+
+:global .lightbox__button-next {
+  right: 0;
+  transform: scaleX(-1);
+}
+
+:global .swiper-slide {
+  transition: 0.4s ease;
+
+  .lightbox__thumbs & {
+    opacity: 0.5;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+:global .swiper-slide-active {
+  .lightbox__thumbs & {
+    opacity: 1;
+  }
+}
