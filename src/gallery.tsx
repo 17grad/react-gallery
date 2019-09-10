@@ -39,9 +39,10 @@ export const Gallery = (props: GalleryProps) => {
     }
   }, [gallerySwiper, thumbnailSwiper]);
 
-  const handleImageClick = (imageId: number) => {
+  const handleImageClick = (imageIndex: number) => {
     window.document.body.style.overflow = 'hidden';
     setIsLightboxOpen(true);
+    gallerySwiper.slideTo(imageIndex);
   };
 
   const handleCloseClick = () => {
@@ -51,10 +52,10 @@ export const Gallery = (props: GalleryProps) => {
 
   return (<>
     <ul className={ styles.gallery }>
-      { props.images.map((thumb: Image) =>
+      { props.images.map((thumb: Image, index: number) =>
         <li className={ styles.galleryItem }
             key={ thumb.id }
-            onClick={ () => handleImageClick(thumb.id) }>
+            onClick={ () => handleImageClick(index) }>
           <img className={ styles.galleryImage }
               src={ thumb.thumbnail }
               alt={ thumb.alt }/>
