@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Swiper from 'react-id-swiper';
 
 import * as styles from './gallery.scss';
-import { Image } from 'core/models/image';
+import { Image } from './image';
 
 interface GalleryProps {
   images: Image[];
