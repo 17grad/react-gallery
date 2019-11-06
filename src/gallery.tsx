@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import * as ReactDOM from 'react-dom';
 import Swiper from 'react-id-swiper';
 
 import * as styles from './gallery.scss';
@@ -25,7 +26,6 @@ export const Gallery = (props: GalleryProps) => {
   const thumbnailSwiperParams = {
     getSwiper: getThumbnailSwiper,
     spaceBetween: 10,
-    slidesPerView: 'auto',
     centeredSlides: true,
     touchRatio: 0.2,
     slideToClickedSlide: true
@@ -63,9 +63,7 @@ export const Gallery = (props: GalleryProps) => {
       )}
     </ul>
 
-    <div className={ styles.lightbox + ' ' + (isLightboxOpen ? styles.open : '') }>
-      <button className={ styles.lightboxClose } onClick={ handleCloseClick } />
-
+    <LightBox isOpen={ isLightboxOpen } onClose={ handleCloseClick }>
       {/* large swiper */}
       <div className={ styles.lightboxTop }>
         <Swiper {...gallerySwiperParams}>
@@ -88,12 +86,41 @@ export const Gallery = (props: GalleryProps) => {
           { props.images.map((thumb: Image) =>
             <div className={ styles.lightboxSlide } key={ thumb.id }>
               <img className={ styles.lightboxImage }
-                  src={ thumb.thumbnail }
+                  src={ thumb.src }
                   alt={ thumb.alt }  />
             </div>
           )}
         </Swiper>
       </div>
-    </div>
+    </LightBox>
   </>);
 };
+
+interface LightBoxProps {
+  children: any;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+class LightBox extends React.Component<LightBoxProps, {}> {
+  portalElement: Element = document.createElement('div');
+
+  componentDidMount() {
+    document.body.appendChild(this.portalElement);
+  }
+
+  componentWillUnmount() {
+    document.body.removeChild(this.portalElement);
+  }
+
+  render() {
+    const { children, isOpen, onClose } = this.props;
+
+    return ReactDOM.createPortal(<>
+      <div className={ styles.lightbox + ' ' + (isOpen ? styles.open : '') }>
+        <button className={ styles.lightboxClose } onClick={ onClose } />
+        {children}
+      </div>
+    </>, this.portalElement);
+  }
+}
